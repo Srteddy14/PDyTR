@@ -1,0 +1,40 @@
+Vagrant.configure("2") do |config|
+  (1..2).each do |i|
+    config.vm.define "vm#{i}" do |machine|
+      machine.vm.box = "hashicorp/bionic64"
+      machine.vm.network "private_network", type: "dhcp"
+      machine.vm.hostname = "vm#{i}"
+
+      machine.vm.provision "shell", inline: <<-SHELL 
+        # Get updated urls/packages sources? & tools
+        apt-get update
+
+        # Get several software packages
+        apt-get install -y net-tools debconf-utils joe zip libc-dev-bin build-essential default-jdk
+
+        # The alias for ls
+        grep -q "alias ls='ls -la'" /home/vagrant/.bashrc || echo -e "\\nalias ls='ls -la'" >> /home/vagrant/.bashrc
+      SHELL
+        #Vagrant automáticamente monta la carpeta donde está tu Vagrantfile dentro de la VM como /vagrant
+      if i == 1
+        # Servidor
+        machine.vm.provision "shell", inline: <<-SHELL
+
+          echo $(hostname -I | awk '{print $1}') > /vagrant/server_ip.txt
+          gcc /vagrant/server_buffers.c -o /home/vagrant/server
+          nohup /home/vagrant/server > /vagrant/results/server.log 2>&1 & # el & ejecuta en backgroud y el nohup es no hang up que no mata el proceso si se cierra la terminal
+        SHELL #el &1 hace referencia al file descriptor 1 (salida estandar) &2 seria al file descriptor 2 (error estandar)
+      else
+        # Cliente
+        machine.vm.provision "shell", inline: <<-SHELL
+        
+          gcc /vagrant/client_buffers.c -o /home/vagrant/client
+          SERVER_IP=$(cat /vagrant/server_ip.txt)
+          until nc -z $SERVER_IP 8080; do sleep 1; done
+          /home/vagrant/client $SERVER_IP > /vagrant/results/client_results.txt 2>&1
+        SHELL
+      end
+    end
+  end
+end
+

@@ -1,0 +1,34 @@
+Vagrant.configure("2") do |config|
+  2.times do |num| # bucle que va del 0 al 1 , num es como el i de un bucle for.
+    # en %01d le decis a ruby que ahi va 1 solo numero decimal, el % toma el valor de la derecha y lo pone en %01d
+    # el %01d, el 0 es con que rellenar, el 1 es cuantos digitos, ej: %03d, y me da 5, el resultado es 005
+    config.vm.define ("vm%01d"  % (num + 1)) do |machine| # los | | son los parametros del bloque de codigo
+      machine.vm.box = "hashicorp/bionic64" 
+      machine.vm.network "public_network"
+      machine.vm.hostname = "vm#{num+1}" # en ruby #{} es interpolacion de strings
+
+      machine.vm.provider "virtualbox" do |vb|
+        vb.memory = "512"
+        vb.name = "vm#{num+1}"
+      end
+
+      #provisioner de Vagrant, es decir, un pedacito de código
+      #que se ejecuta dentro de la máquina virtual cuando la levantás con
+      #vagrant up o vagrant provision
+      #inline: <<-SHELL → significa que el script está escrito justo ahí, entre <<-SHELL y SHELL.
+      #machine.vm.provision "shell", path: "scripts/setup.sh" ejecuta en la shell de las vm
+      #el script que hay en esa ruta
+      #con inline ponemos los script directamente en el vagrantFile
+      machine.vm.provision "shell", inline: <<-SHELL 
+        # Get updated urls/packages sources? & tools
+        apt-get update
+
+        # Get several software packages
+        apt-get install -y net-tools debconf-utils joe zip libc-dev-bin build-essential default-jdk
+
+        # The alias for ls
+        grep -q "alias ls='ls -la'" /home/vagrant/.bashrc || echo -e "\\nalias ls='ls -la'" >> /home/vagrant/.bashrc
+      SHELL
+    end
+  end
+end
