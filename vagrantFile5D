@@ -13,7 +13,7 @@ Vagrant.configure("2") do |config|
       grep -q "alias ls='ls -la'" /home/vagrant/.bashrc || echo -e "\\nalias ls='ls -la'" >> /home/vagrant/.bashrc
 
      echo $(hostname -I | awk '{print $2}') > /vagrant/server_ip.txt
-     gcc /vagrant/client_10_seg.c -o /home/vagrant/server
+     gcc /vagrant/server_buffers.c -o /home/vagrant/server
      nohup /home/vagrant/server > /vagrant/server.log 2>&1 &
 
     SHELL

@@ -1,0 +1,22 @@
+Servidor escuchando en el puerto 8080...
+Cliente conectado: 192.168.56.1
+Cliente desconectado
+Cliente conectado: 192.168.56.1
+Recibidos 10 bytes
+Cliente desconectado
+Cliente conectado: 192.168.56.1
+Recibidos 100 bytes
+Cliente desconectado
+Cliente conectado: 192.168.56.1
+Recibidos 1000 bytes
+Cliente desconectado
+Cliente conectado: 192.168.56.1
+Recibidos 10000 bytes
+Cliente desconectado
+Cliente conectado: 192.168.56.1
+Recibidos 100000 bytes
+Cliente desconectado
+Cliente conectado: 192.168.56.1
+Recibidos 208512 bytes
+Recibidos 221544 bytes
+Cliente desconectado
