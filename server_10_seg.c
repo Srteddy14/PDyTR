@@ -12,6 +12,8 @@
 
 int main()
 {
+    printf("Servidor durmiendo 10 segundos\n");
+    sleep(10);
     setvbuf(stdout, NULL, _IONBF, 0); // desactiva buffering para poder registrar el log del servidor
     int server_fd, client_fd;
     struct sockaddr_in server_addr, client_addr;
